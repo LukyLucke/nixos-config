@@ -10,7 +10,7 @@ _: {
           partitions = {
             ESP = {
               type = "EF00";  # EFI partition type.
-              size = "500M";
+              size = "256";
               content = {
                 type = "filesystem";
                 format = "vfat";
@@ -22,7 +22,7 @@ _: {
               size = "100%";  # Takes the remaining half of the disk space.
               content = {
                 type = "filesystem";
-                format = "ext4";
+                format = "btrfs";
                 mountpoint = "/";
               };
             };
