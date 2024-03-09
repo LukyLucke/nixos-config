@@ -102,7 +102,7 @@ let
       # Desktop 1
       # Email, Calendar, News, IDE
       bspc rule -a Google-chrome -o desktop='^1'
-      /etc/profiles/per-user/dustin/bin/google-chrome-stable "https://www.fastmail.com" "https://calendar.google.com/calendar/u/0/r" "https://www.techmeme.com"  &!
+      /etc/profiles/per-user/Gab/bin/google-chrome-stable "https://www.fastmail.com" "https://calendar.google.com/calendar/u/0/r" "https://www.techmeme.com"  &!
 
       sleep 1
       bspc rule -a PHPStorm -o desktop='^1'
