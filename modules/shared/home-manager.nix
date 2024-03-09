@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let name = "GabdaG";
-    user = "LuckyLuke";
+    user = "LukyLucke";
     email = "gabdag@gmail.com"; in
 {
 
