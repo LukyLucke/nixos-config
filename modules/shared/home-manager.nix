@@ -1,8 +1,8 @@
 { config, pkgs, lib, ... }:
 
-let name = "Dustin Lyons";
-    user = "dustin";
-    email = "dustin@dlyons.dev"; in
+let name = "GabdaG";
+    user = "LuckyLuke";
+    email = "gabdag@gmail.com"; in
 {
 
   direnv = {
