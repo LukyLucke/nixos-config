@@ -1,6 +1,6 @@
 { config, inputs, lib, pkgs, agenix, ... }:
 
-let user = "dustin";
+let user = "Gab";
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
 {
   imports = [
@@ -26,13 +26,13 @@ let user = "dustin";
   };
 
   # Set your time zone.
-  time.timeZone = "America/New_York";
+  time.timeZone = "Europe/Moscow";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
-    hostName = "felix"; # Define your hostname.
+    hostName = "NixOS"; # Define your hostname.
     useDHCP = false;
     interfaces.eno1.useDHCP = true;
   };
@@ -89,8 +89,8 @@ let user = "dustin";
 
       # Turn Caps Lock into Ctrl
       xkb = {
-        layout = "us";
-        options = "ctrl:nocaps";
+        layout = "us,ru";
+        options = "grp:win_space_toggle";
       };
     };
 
