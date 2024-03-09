@@ -4,6 +4,7 @@ with pkgs; [
   # General packages for development and system management
   act
   alacritty
+tilda
   aspell
   aspellDicts.en
   bash-completion
@@ -23,7 +24,7 @@ with pkgs; [
   zip
 
   # Encryption and security tools
-  _1password
+  #_1password
   age
   age-plugin-yubikey
   gnupg
