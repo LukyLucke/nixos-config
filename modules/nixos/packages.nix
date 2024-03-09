@@ -5,9 +5,9 @@ let shared-packages = import ../shared/packages.nix { inherit pkgs; }; in
 shared-packages ++ [
 
   # Security and authentication
-  _1password-gui
-  yubikey-agent
-  keepassxc
+  #_1password-gui
+  #yubikey-agent
+  #keepassxc
 
   # App and package management
   appimage-run
@@ -34,17 +34,17 @@ shared-packages ++ [
   pavucontrol # Pulse audio controls
 
   # Messaging and chat applications
-  cider # Apple Music on Linux
-  discord
+  #cider # Apple Music on Linux
+  #discord
   hexchat # Chat
-  fractal # Matrix.org messaging app
-  #tdesktop # telegram desktop
+  #fractal # Matrix.org messaging app
+  tdesktop # telegram desktop
 
   # Testing and development tools
-  beekeeper-studio
-  cypress # Functional testing framework using headless chrome
+  #beekeeper-studio
+  #cypress # Functional testing framework using headless chrome
   chromedriver
-  direnv
+  #direnv
   rofi
   rofi-calc
   rnix-lsp # lsp-mode for nix
@@ -83,10 +83,11 @@ shared-packages ++ [
   yad # I use yad-calendar with polybar
   xdotool
   google-chrome
+  firefox
 
   # PDF viewer
   zathura
 
   # Music and entertainment
-  spotify
+  #spotify
 ]
