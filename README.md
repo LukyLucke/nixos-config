@@ -337,7 +337,7 @@ After the keys are in place, you're good to go. Run either of these commands:
 * Forgoing secrets means you must configure apps that depend on keys or passwords yourself.
 * You can always add secrets later.
 ```sh
-sudo nix run --extra-experimental-features 'nix-command flakes' github:dustinlyons/nixos-config#install
+sudo nix run --extra-experimental-features 'nix-command flakes' github:LukyLucke/nixos-config#install
 ```
 
 **With secrets**
