@@ -85,6 +85,7 @@ shared-packages ++ [
   xdotool
   google-chrome
   firefox
+  gparted
 
   # PDF viewer
   zathura
