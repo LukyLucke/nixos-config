@@ -4,7 +4,7 @@ with pkgs; [
   # General packages for development and system management
   act
   alacritty
-tilda
+  tilda
   aspell
   aspellDicts.en
   bash-completion
@@ -22,6 +22,7 @@ tilda
   sqlite
   wget
   zip
+  gparted
 
   # Encryption and security tools
   #_1password
