@@ -64,7 +64,7 @@ let user = "%USER%";
 
       # Uncomment these for AMD or Nvidia GPU
       # boot.initrd.kernelModules = [ "amdgpu" ];
-      # videoDrivers = [ "amdgpu" ];
+      videoDrivers = [ "amdgpu" ];
       # videoDrivers = [ "nvidia" ];
 
       # Uncomment for Nvidia GPU
@@ -90,8 +90,8 @@ let user = "%USER%";
       };
 
       # Turn Caps Lock into Ctrl
-      layout = "us";
-      xkbOptions = "ctrl:nocaps";
+      layout = "us,ru";
+      xkbOptions = "grp:win_space_toggle";
 
       # Better support for general peripherals
       libinput.enable = true;
