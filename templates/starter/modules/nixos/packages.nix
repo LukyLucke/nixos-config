@@ -5,8 +5,8 @@ let shared-packages = import ../shared/packages.nix { inherit pkgs; }; in
 shared-packages ++ [
 
   # Security and authentication
-  yubikey-agent
-  keepassxc
+  #yubikey-agent
+  #keepassxc
 
   # App and package management
   appimage-run
@@ -47,6 +47,7 @@ shared-packages ++ [
   xclip # For the org-download package in Emacs
   xorg.xwininfo # Provides a cursor to click and learn about windows
   xorg.xrandr
+  tilda
 
   # File and system utilities
   inotify-tools # inotifywait, inotifywatch - For file system events
@@ -60,10 +61,11 @@ shared-packages ++ [
   yad # yad-calendar is used with polybar
   xdotool
   google-chrome
+  firefox
 
   # PDF viewer
   zathura
 
   # Music and entertainment
-  spotify
+  #spotify
 ]
