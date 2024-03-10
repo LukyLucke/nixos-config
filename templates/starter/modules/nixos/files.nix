@@ -7,13 +7,56 @@ let
   xdg_stateHome  = "${home}/.local/state"; in
 {
 
+  "${xdg_dataHome}/bin/movesinks" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      pacmd set-default-sink $1
+      pacmd list-sink-inputs | grep index | while read line
+      do
+        pacmd move-sink-input `echo $line | cut -f2 -d' '` $1
+      done
+    '';
+  };
+
+  "${xdg_dataHome}/bin/speakers" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      # Script to change audio format to headphones and check if the sink exists
+
+      # Define the sink name
+      SINK_NAME="alsa_output.usb-Audioengine_Audioengine_2_-00.analog-stereo"
+
+      # Check if the sink exists
+      if pactl list short sinks | grep -q "$SINK_NAME"; then
+        # Sink exists, set it as the default
+        pacmd set-default-sink "$SINK_NAME"
+        movesinks "$SINK_NAME"
+      else
+        # Sink does not exist, print message
+        echo "Turn on your speakers, stupid."
+      fi
+    '';
+  };
+
+  "${xdg_dataHome}/bin/headphones" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      # Changes audio format to headphones
+      pacmd set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
+      movesinks alsa_output.pci-0000_00_1f.3.analog-stereo 
+    '';
+  };
+
   "${xdg_configHome}/bspwm/bspwmrc" = {
     executable = true;
     text = ''
       #! /bin/sh
       #
       # Set the number of workspaces
-      bspc monitor -d 1 2 3 4 5 6
+      bspc monitor -d 1 2 3 4 5 6 7 8 9 10
 
       # Launch keybindings daemon
       pgrep -x sxhkd > /dev/null || sxhkd &
@@ -39,9 +82,13 @@ let
       bspc config pointer_action2 resize_corner
 
       # Set background and top bar
+      feh --bg-scale $HOME/.local/share/img/wallpaper/active
       systemctl --user start polybar
 
       sleep .25
+
+      # Launch these when script runs
+      # -o option means "one shot", meaning the rule goes away after launching the app
 
       # Wait for the network to be up
       notify-send 'Waiting for network...'
@@ -52,19 +99,53 @@ let
       notify-send 'Starting Emacs...'
       /run/current-system/sw/bin/emacsclient -a "" -e '(progn)' &
 
+      # Desktop 1
+      # Email, Calendar, News, IDE
+      bspc rule -a Google-chrome -o desktop='^1'
+      /etc/profiles/per-user/Gab/bin/google-chrome-stable "https://www.fastmail.com" "https://calendar.google.com/calendar/u/0/r" "https://www.techmeme.com"  &!
+
+      sleep 1
+      bspc rule -a PHPStorm -o desktop='^1'
+      /run/current-system/sw/bin/phpstorm &!
+
       # Wait for Emacs daemon to be ready
       while ! /run/current-system/sw/bin/emacsclient -e '(progn)' &>/dev/null; do
       sleep 1
       done
       notify-send 'Emacs daemon started.'
+
+      # Desktop 2
+      # Terminal, Emacs (magit)
+      bspc rule -a Alacritty -o desktop='^2'
+      /etc/profiles/per-user/dustin/bin/alacritty -e sh -c 'tmux attach || tmux new-session' &
+
+      sleep 1
+      bspc rule -a Emacs -o desktop='^2'
+      /run/current-system/sw/bin/emacsclient -c &!
+
+      sleep .5
+
+      # Desktop 3
+      # ChatGPT
+      bspc rule -a Google-chrome -o desktop='^3'
+      /etc/profiles/per-user/dustin/bin/google-chrome-stable --new-window "https://chat.openai.com" &!
+
+      sleep .5
+
+      # Desktop 4
+      # Apple Music
+      bspc rule -a Cider -o desktop='^4'
+      /etc/profiles/per-user/dustin/bin/cider &!
+
+      sleep 1
     '';
   };
 
   "${xdg_configHome}/sxhkd/sxhkdrc" = {
     text = ''
     # Close window
-    alt + F4
-          bspc node --close
+    super + q
+        bspc node --close
 
     # Make split ratios equal
     super + equal
@@ -75,80 +156,63 @@ let
           bspc node @/ --balance
 
     # Toogle tiling of window
-    super + d
+    super + f1
           bspc query --nodes -n focused.tiled && state=floating || state=tiled; \
           bspc node --state \~$state
 
     # Toggle fullscreen of window
-    super + f
+    super + f2
           bspc node --state \~fullscreen
 
     # Swap the current node and the biggest window
-    super + g
+    super + f3
           bspc node -s biggest.window
 
     # Swap the current node and the smallest window
-    super + shift + g
+    super + shift + f3
           bspc node -s biggest.window
 
     # Alternate between the tiled and monocle layout
-    super + m
+    super + f4
           bspc desktop -l next
 
     # Move between windows in monocle layout
-    super + {_, alt + }m
+    super + tab
           bspc node -f {next, prev}.local.!hidden.window
 
     # Focus the node in the given direction
-    super + {_,shift + }{h,j,k,l}
+    super + {_,shift + }{a,s,w,d}
           bspc node -{f,s} {west,south,north,east}
 
     # Focus left/right occupied desktop
-    super + {Left,Right}
-          bspc desktop --focus {prev,next}.occupied
-
-    # Focus left/right occupied desktop
-    super + {Up,Down}
+    super + {a,d}
           bspc desktop --focus {prev,next}.occupied
 
     # Focus left/right desktop
-    ctrl + alt + {Left,Right}
-          bspc desktop --focus {prev,next}
-
-    # Focus left/right desktop
-    ctrl + alt + {Up, Down}
-          bspc desktop --focus {prev,next}
+    super + alt + {a,d}
+         bspc desktop --focus {prev,next}
 
     # Focus the older or newer node in the focus history
-    super + {o,i}
+    super + ctrl + {a,d}
           bspc wm -h off; \
           bspc node {older,newer} -f; \
           bspc wm -h on
 
     # Focus or send to the given desktop
-    super + {_,shift + }{1-9,0}
+    super + {1-9,0}
           bspc {desktop -f,node -d} '^{1-9,10}'
 
     # Preselect the direction
-    super + alt + {h,j,k,l}
+    super + alt + {a,s,w,d}
           bspc node -p {west,south,north,east}
 
     # Cancel the preselect
     # For context on syntax: https://github.com/baskerville/bspwm/issues/344
-    super + alt + {_,shift + }Escape
-          bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
-
-    # Preselect the direction
-    super + ctrl + {h,j,k,l}
-          bspc node -p {west,south,north,east}
-
-    # Cancel the preselect
-    # For context on syntax: https://github.com/baskerville/bspwm/issues/344
-    super + ctrl + {_,shift + }Escape
+    super + alt + Escape
           bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
     # Set the node flags
-    super + ctrl + {m,x,s,p}
+    super + ctrl + {m,l,s,p}
           bspc node -g {marked,locked,sticky,private}
 
     # Send the newest marked node to the newest preselected node
@@ -156,30 +220,40 @@ let
           bspc node newest.marked.local -n newest.!automatic.local
 
     # Program launcher
-    super + @space
+    super
           rofi -config -no-lazy-grab -show drun -modi drun -theme /home/${user}/.config/rofi/launcher.rasi
 
     # Terminal emulator
-    super + Return
+    super + t
           bspc rule -a Alacritty -o state=floating rectangle=1024x768x0x0 center=true && /etc/profiles/per-user/${user}/bin/alacritty
 
     # Terminal emulator
-    super + ctrl + Return
+    super + Return
           /etc/profiles/per-user/${user}/bin/alacritty
 
     # Jump to workspaces
-    super + t
-          bspc desktop --focus ^2
-    super + b
+    super + shift + 1
           bspc desktop --focus ^1
-    super + w
+    super + shift + 2
+          bspc desktop --focus ^2
+    super + shift + 3
+          bspc desktop --focus ^3
+    super + shift + 4
           bspc desktop --focus ^4
-    super + Tab
+    super + shift + 5
+          bspc desktop --focus ^5
+    super + shift + 6
+          bspc desktop --focus ^6
+    super + shift + 7
+          bspc desktop --focus ^7
+    super + shift + 8
+          bspc desktop --focus ^8
+    super + shift + 9
+          bspc desktop --focus ^9
+    super + shift + 0
+          bspc desktop --focus ^10
+    super + backspace
           bspc {node,desktop} -f last
-
-    # Keepass XC
-    super + shift + x
-          /etc/profiles/per-user/${user}/bin/keepassxc
 
     # Emacs
     # -c flag is --create-frame
@@ -192,20 +266,20 @@ let
          emacsclient -c -a emacs
 
     # Web browser
-    ctrl + alt + Return
+    super + w
          google-chrome-stable
 
     # File browser at home dir
-    super + shift + @space
+    super + e
          pcmanfm
 
     # Take a screenshot with PrintSc
-    Print
+    printscreen
          flameshot gui -c -p $HOME/.local/share/img/screenshots
 
     # Lock the screen
-    ctrl + alt + BackSpace
-         i3lock
+    ctrl + alt + delete
+        i3lock-fancy-rapid 10 15
 
     # Audio controls for + volume
     XF86AudioRaiseVolume
@@ -277,7 +351,7 @@ let
     text = ''
       #!/bin/sh
 
-      rofi -no-config -no-lazy-grab -show drun -modi drun -theme ${xdg_configHome}/rofi/launcher.rasi
+      rofi -no-config -no-lazy-grab -show drun -modi drun -theme ~/.config/rofi/launcher.rasi
     '';
   };
 
@@ -287,7 +361,7 @@ let
     text = ''
       #!/bin/sh
 
-      configDir="~/.local/share/src/nixos-config/nixos/config/rofi"
+      configDir="~${xdg_configHome}/rofi"
       uptime=$(uptime -p | sed -e 's/up //g')
       rofi_command="rofi -no-config -theme $configDir/powermenu.rasi"
 
